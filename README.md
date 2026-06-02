@@ -25,6 +25,5 @@ idea-breaker/
 │   │   └── main.css    # Styles
 │   └── scripts/
 │       └── app.js      # Application logic
-├── package.json
 └── .gitignore
 ```
