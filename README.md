@@ -20,7 +20,7 @@ Then open http://localhost:8000 in your browser.
 idea-breaker/
 ├── index.html          # Main entry point
 ├── src/
-│   ├── config.js       # API configuration
+│   ├── config.js       # API config
 │   ├── styles/
 │   │   └── main.css    # Styles
 │   └── scripts/

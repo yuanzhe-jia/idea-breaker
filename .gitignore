@@ -6,9 +6,9 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Configuration
+src/config.js
+
 # Editor directories
 .vscode/
 .idea/
-
-# Configuration with secrets
-src/config.js

@@ -411,7 +411,7 @@ function refreshAI() {
   fetchFromAI();
 }
 
-// 事件监听
+// 监听事件
 document.getElementById('P').addEventListener('click', () => navigate(-1));
 document.getElementById('N').addEventListener('click', () => navigate(1));
 
