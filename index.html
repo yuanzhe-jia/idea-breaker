@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idea Breaker</title>
+  <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <h1>Idea Breaker</h1>
+      <div class="sub" id="DT"></div>
+    </div>
+    <div id="C">
+      <div id="T" style="background:#f0f0ee"></div>
+      <div class="bot">
+        <p id="X"></p>
+        <div class="foot">
+          <span id="G"></span>
+          <div class="arr">
+            <button id="P" aria-label="上一张">←</button>
+            <button id="N" aria-label="下一张">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">← → 键盘箭头或滑动切换</div>
+    <div class="refresh">
+      <button id="R" aria-label="刷新AI内容">🔄 刷新AI洞察</button>
+    </div>
+    <div class="status" id="ST"></div>
+  </div>
+  <script type="module" src="src/scripts/app.js"></script>
+</body>
+</html>
