@@ -2,7 +2,9 @@ import { API_CONFIG } from '../config.js';
 
 // 配置常量
 const CONFIG = {
-  API_URL: `${API_CONFIG.API_URL}?key=${API_CONFIG.API_KEY}`,
+  API_URL: API_CONFIG.PROXY_URL 
+    ? `${API_CONFIG.PROXY_URL}${encodeURIComponent(API_CONFIG.API_URL)}?key=${API_CONFIG.API_KEY}`
+    : `${API_CONFIG.API_URL}?key=${API_CONFIG.API_KEY}`,
   TRANSITION_DURATION: 300,
   SWIPE_THRESHOLD: 40,
   MAX_API_ATTEMPTS: 3,
@@ -240,7 +242,7 @@ function saveToCache(data) {
 }
 
 // AI提示词
-const aiPrompt = `今天是${dateString}。请先用Google搜索获取最近真实发生的新闻、政策变化、行业动态、市场数据等，然后基于这些真实信息，生成15条个人商机洞察。每条严格控制在100个字符以内。示范（注意每条的句式、语气、切入角度都不一样）："老年人智能手机普及了，但他们最大的痛点是不会用。上门教老人用手机这件事，听着不起眼，需求却大得惊人。" "身边考证的人越来越多，但真正赚钱的不是考证本身，是卖备考资料、做陪伴督学——利润高，还能标准化复制。" "无人机驾照现在考一个才几千块，等低空经济真正起量的时候，这东西的含金量可能完全不一样了。" "你有没有注意到，小区门口的快递柜旁边永远堆着没人要的包装箱？回收这些纸箱再转卖给商家，有人已经靠这个月入过万了。"——关键要求：像朋友聊天一样自然地说，不要用"随着...的发展"、"值得关注的是"这类书面套话。每条的句式必须不同，有的可以用反问，有的可以讲一个现象，有的可以直接说一个行动，有的可以先抛一个问题再给方向。基于真实可查证的近期事件，不要编造；商机面向个人可行动；领域多样化，不要集中在AI。严格按JSON数组输出：[{"text":"内容","tag":"领域(2字)"}]，不要输出其他内容。`;
+const aiPrompt = `今天是${dateString}。请基于你所知道的最新信息，生成15条个人商机洞察。每条严格控制在100个字符以内。示范（注意每条的句式、语气、切入角度都不一样）："老年人智能手机普及了，但他们最大的痛点是不会用。上门教老人用手机这件事，听着不起眼，需求却大得惊人。" "身边考证的人越来越多，但真正赚钱的不是考证本身，是卖备考资料、做陪伴督学——利润高，还能标准化复制。" "无人机驾照现在考一个才几千块，等低空经济真正起量的时候，这东西的含金量可能完全不一样了。"——关键要求：像朋友聊天一样自然地说，不要用"随着...的发展"、"值得关注的是"这类书面套话。每条的句式必须不同，有的可以用反问，有的可以讲一个现象，有的可以直接说一个行动，有的可以先抛一个问题再给方向。基于真实可查证的信息，不要编造；商机面向个人可行动；领域多样化，不要集中在AI。严格按JSON数组输出：[{"text":"内容","tag":"领域(2字)"}]，不要输出其他内容。`;
 
 // 验证AI返回的数据格式
 function validateResponse(data) {
@@ -292,15 +294,20 @@ function validateResponse(data) {
 }
 
 // 调用Gemini API
-async function callGeminiApi(prompt, tools = null) {
+async function callGeminiApi(prompt) {
+  console.log('🔄 开始调用Gemini API...');
+  
   const requestBody = { 
     contents: [{ parts: [{ text: prompt }] }], 
-    generationConfig: { thinkingConfig: { thinkingBudget: 0 } } 
+    generationConfig: { 
+      temperature: 0.7,
+      maxOutputTokens: 4096,
+      topK: 40,
+      topP: 0.95
+    }
   };
   
-  if (tools) {
-    requestBody.tools = tools;
-  }
+  console.log('📤 请求体:', JSON.stringify(requestBody, null, 2));
   
   const response = await fetch(CONFIG.API_URL, {
     method: 'POST',
@@ -308,21 +315,30 @@ async function callGeminiApi(prompt, tools = null) {
     body: JSON.stringify(requestBody)
   });
   
+  console.log('📥 响应状态:', response.status, response.statusText);
+  
   if (!response.ok) {
-    throw new Error(`API请求失败，HTTP状态码: ${response.status}`);
+    const errorText = await response.text();
+    console.error('❌ API请求失败:', errorText);
+    throw new Error(`API请求失败，HTTP状态码: ${response.status}, 错误信息: ${errorText}`);
   }
   
   const data = await response.json();
+  console.log('📊 API响应:', JSON.stringify(data, null, 2));
   
   let rawText = '';
   try {
     rawText = data.candidates[0].content.parts[0].text;
   } catch (error) {
+    console.error('❌ 响应格式解析失败:', error);
     throw new Error('API响应格式错误');
   }
   
   // 清理可能的代码块标记
-  return rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+  const cleanedText = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+  console.log('✨ 清理后的响应:', cleanedText);
+  
+  return cleanedText;
 }
 
 // 验证事实准确性
@@ -363,7 +379,7 @@ async function fetchFromAI(attempt = 1) {
   statusText.textContent = `加载中${attempt > 1 ? ` (第${attempt}次尝试)` : ''}...`;
   
   try {
-    const rawResponse = await callGeminiApi(aiPrompt, [{ google_search: {} }]);
+    const rawResponse = await callGeminiApi(aiPrompt);
     const parsedData = JSON.parse(rawResponse);
     const validatedData = validateResponse(parsedData);
     const verifiedData = await verifyFacts(validatedData);
