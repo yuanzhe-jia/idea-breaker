@@ -3,7 +3,7 @@ import { API_CONFIG } from '../config.js';
 // 配置常量
 const CONFIG = {
   API_URL: API_CONFIG.PROXY_URL 
-    ? `${API_CONFIG.PROXY_URL}${encodeURIComponent(API_CONFIG.API_URL)}?key=${API_CONFIG.API_KEY}`
+    ? `${API_CONFIG.PROXY_URL}${encodeURIComponent(API_CONFIG.API_URL)}&key=${API_CONFIG.API_KEY}`
     : `${API_CONFIG.API_URL}?key=${API_CONFIG.API_KEY}`,
   TRANSITION_DURATION: 300,
   SWIPE_THRESHOLD: 40,
@@ -293,9 +293,15 @@ function validateResponse(data) {
   return validItems;
 }
 
-// 调用Gemini API
-async function callGeminiApi(prompt) {
-  console.log('🔄 开始调用Gemini API...');
+// 调用Gemini API（支持多代理自动重试）
+async function callGeminiApi(prompt, proxyIndex = 0) {
+  const proxyUrls = [
+    'https://corsproxy.io/?',
+    'https://api.allorigins.win/raw?url=',
+    'https://cors-anywhere.herokuapp.com/'
+  ];
+  
+  console.log('🔄 开始调用Gemini API... (代理索引:', proxyIndex, ')');
   
   const requestBody = { 
     contents: [{ parts: [{ text: prompt }] }], 
@@ -309,36 +315,76 @@ async function callGeminiApi(prompt) {
   
   console.log('📤 请求体:', JSON.stringify(requestBody, null, 2));
   
-  const response = await fetch(CONFIG.API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
-  });
+  // 构建带当前代理的URL
+  const proxyUrl = proxyUrls[proxyIndex % proxyUrls.length];
+  const targetUrl = `${API_CONFIG.API_URL}?key=${API_CONFIG.API_KEY}`;
+  const fullUrl = proxyUrl.includes('allorigins') 
+    ? `${proxyUrl}${encodeURIComponent(targetUrl)}`
+    : `${proxyUrl}${targetUrl}`;
   
-  console.log('📥 响应状态:', response.status, response.statusText);
+  console.log('🌐 请求URL:', fullUrl);
   
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('❌ API请求失败:', errorText);
-    throw new Error(`API请求失败，HTTP状态码: ${response.status}, 错误信息: ${errorText}`);
-  }
+  // 创建超时控制器（30秒超时）
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
   
-  const data = await response.json();
-  console.log('📊 API响应:', JSON.stringify(data, null, 2));
-  
-  let rawText = '';
   try {
-    rawText = data.candidates[0].content.parts[0].text;
+    const response = await fetch(fullUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    console.log('📥 响应状态:', response.status, response.statusText);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ API请求失败:', errorText);
+      
+      // 如果当前代理失败，尝试下一个代理
+      if (proxyIndex < proxyUrls.length - 1) {
+        console.log('🔄 尝试下一个代理...');
+        return callGeminiApi(prompt, proxyIndex + 1);
+      }
+      
+      throw new Error(`API请求失败，HTTP状态码: ${response.status}, 错误信息: ${errorText}`);
+    }
+    
+    const data = await response.json();
+    console.log('📊 API响应:', JSON.stringify(data, null, 2));
+    
+    let rawText = '';
+    try {
+      rawText = data.candidates[0].content.parts[0].text;
+    } catch (error) {
+      console.error('❌ 响应格式解析失败:', error);
+      throw new Error('API响应格式错误');
+    }
+    
+    // 清理可能的代码块标记
+    const cleanedText = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    console.log('✨ 清理后的响应:', cleanedText);
+    
+    return cleanedText;
   } catch (error) {
-    console.error('❌ 响应格式解析失败:', error);
-    throw new Error('API响应格式错误');
+    clearTimeout(timeoutId);
+    
+    if (error.name === 'AbortError') {
+      console.error('⏱️ 请求超时！');
+    } else {
+      console.error('❌ 请求失败:', error.message);
+    }
+    
+    // 如果当前代理失败，尝试下一个代理
+    if (proxyIndex < proxyUrls.length - 1) {
+      console.log('🔄 尝试下一个代理...');
+      return callGeminiApi(prompt, proxyIndex + 1);
+    }
+    
+    throw error;
   }
-  
-  // 清理可能的代码块标记
-  const cleanedText = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-  console.log('✨ 清理后的响应:', cleanedText);
-  
-  return cleanedText;
 }
 
 // 验证事实准确性
