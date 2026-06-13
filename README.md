@@ -10,9 +10,10 @@ python -m http.server 8000
 
 # Or use Node.js
 npx live-server . --port=8000
+
+# Then open http://localhost:8000 in your browser
 ```
 
-Then open http://localhost:8000 in your browser.
 
 ## Project Structure
 
