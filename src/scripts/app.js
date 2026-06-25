@@ -1,3 +1,7 @@
+// Vercel Analytics
+import { inject } from '@vercel/analytics';
+inject();
+
 // Configuration
 const CONFIG = {
   API_URL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',

@@ -9,6 +9,7 @@ Break through mental blocks and spark unlimited creativity with daily business i
 - **AI Provider**: Doubao API (ByteDance)
 - **Fonts**: Plus Jakarta Sans (Google Fonts)
 - **Icons**: Custom SVG icons
+- **Analytics**: Vercel Analytics (page views, web vitals)
 
 ## Quick Start
 
@@ -36,6 +37,20 @@ Create a `.env` file in the project root:
 VITE_DOUBAO_API_KEY=your_doubao_api_key_here
 VITE_DOUBAO_MODEL=ep-202410xxxxx-xxxxx
 ```
+
+## Deployment
+
+Deploy to Vercel to enable analytics and speed insights:
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel --prod
+```
+
+After deployment, view analytics in your Vercel dashboard under the "Analytics" tab.
 
 ## Project Structure
 
