@@ -1,19 +1,15 @@
-import { API_CONFIG } from '../config.js';
-
-// 配置常量
+// Configuration
 const CONFIG = {
-  API_URL: API_CONFIG.PROXY_URL 
-    ? `${API_CONFIG.PROXY_URL}${encodeURIComponent(API_CONFIG.API_URL)}&key=${API_CONFIG.API_KEY}`
-    : `${API_CONFIG.API_URL}?key=${API_CONFIG.API_KEY}`,
+  API_URL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
   TRANSITION_DURATION: 300,
   SWIPE_THRESHOLD: 40,
   MAX_API_ATTEMPTS: 3,
   MIN_ITEMS_REQUIRED: 5,
   TEXT_LENGTH: { min: 15, max: 100 },
-  CACHE_KEY_PREFIX: 'idea_breaker_v12'
+  CACHE_KEY_PREFIX: 'idea_breaker_v13'
 };
 
-// 颜色主题配置
+// Color theme configurations
 const COLOR_THEMES = {
   purple: ['#EEEDFE', '#CECBF6', '#AFA9EC', '#534AB7', '#3C3489'],
   teal: ['#E1F5EE', '#9FE1CB', '#5DCAA5', '#0F6E56', '#085041'],
@@ -26,7 +22,7 @@ const COLOR_THEMES = {
 
 const colorThemeKeys = Object.keys(COLOR_THEMES);
 
-// SVG图标生成器
+// SVG icon generators
 const SVG_ICONS = {
   question: (stroke, fill) => `<circle cx="50" cy="50" r="28" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/><text x="50" y="59" text-anchor="middle" font-size="30" font-weight="500" fill="${stroke}">?</text>`,
   building: (stroke, fill) => `<rect x="22" y="32" width="22" height="38" rx="2" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/><rect x="56" y="20" width="22" height="50" rx="2" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/><line x1="29" y1="42" x2="37" y2="42" stroke="${stroke}" stroke-width="1.5"/><line x1="63" y1="30" x2="71" y2="30" stroke="${stroke}" stroke-width="1.5"/><line x1="63" y1="40" x2="71" y2="40" stroke="${stroke}" stroke-width="1.5"/>`,
@@ -53,28 +49,28 @@ const SVG_ICONS = {
 
 const iconKeys = Object.keys(SVG_ICONS);
 
-// 标签与图标映射
+// Tag to icon mapping
 const TAG_ICON_MAP = {
-  '政策': 'balance', '法规': 'balance', '法律': 'balance',
-  '能源': 'drop', '环保': 'tree', '碳中': 'tree',
-  '文娱': 'brush', '内容': 'brush', '短视': 'brush', '直播': 'brush',
-  '养老': 'heart', '医疗': 'heart', '健康': 'heart', '心理': 'mirror',
-  '宠物': 'seed', '农业': 'seed', '食品': 'seed', '餐饮': 'seed',
-  '消费': 'chart', '零售': 'chart', '电商': 'chart', '跨境': 'rocket',
-  '教育': 'book', '培训': 'book', '考证': 'book', '学习': 'book',
-  '科技': 'block', '数据': 'block', '信息': 'block',
-  '金融': 'chart', '理财': 'chart', '投资': 'chart', '经济': 'chart',
-  '房产': 'building', '建筑': 'building', '城市': 'building',
-  '出行': 'rocket', '物流': 'rocket', '交通': 'rocket',
-  '社交': 'share', '社区': 'share', '本地': 'share',
-  '职场': 'unlock', '创业': 'star', '副业': 'star', '商机': 'star',
-  '旅游': 'leaf', '文旅': 'leaf', '体育': 'star',
-  '设计': 'brush', '艺术': 'brush',
-  '生物': 'seed', '自然': 'leaf', '生态': 'tree',
-  '历史': 'clock', '文化': 'share', '哲学': 'question'
+  'Policy': 'balance', 'Regulation': 'balance', 'Legal': 'balance',
+  'Energy': 'drop', 'Eco': 'tree', 'Carbon': 'tree',
+  'Media': 'brush', 'Content': 'brush', 'Video': 'brush', 'Live': 'brush',
+  'Care': 'heart', 'Health': 'heart', 'Medical': 'heart', 'Mental': 'mirror',
+  'Pet': 'seed', 'Agri': 'seed', 'Food': 'seed', 'Dining': 'seed',
+  'Retail': 'chart', 'E-commerce': 'chart', 'Cross-border': 'rocket',
+  'Education': 'book', 'Training': 'book', 'Exam': 'book', 'Learning': 'book',
+  'Tech': 'block', 'Data': 'block', 'Info': 'block',
+  'Finance': 'chart', 'Wealth': 'chart', 'Invest': 'chart', 'Economy': 'chart',
+  'RealEstate': 'building', 'Construction': 'building', 'City': 'building',
+  'Travel': 'rocket', 'Logistics': 'rocket', 'Transport': 'rocket',
+  'Social': 'share', 'Community': 'share', 'Local': 'share',
+  'Career': 'unlock', 'Startup': 'star', 'SideHustle': 'star', 'Opportunity': 'star',
+  'Tourism': 'leaf', 'Culture': 'leaf', 'Sports': 'star',
+  'Design': 'brush', 'Art': 'brush',
+  'Bio': 'seed', 'Nature': 'leaf', 'Ecology': 'tree',
+  'History': 'clock', 'Philosophy': 'question'
 };
 
-// 工具函数
+// Utility functions
 function generateSvgIcon(iconName, strokeColor, fillColor, size) {
   const iconFn = SVG_ICONS[iconName] || SVG_ICONS.star;
   return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">${iconFn(strokeColor, fillColor)}</svg>`;
@@ -99,17 +95,17 @@ function mulberry32(seed) {
   };
 }
 
-// 日期相关
+// Date related
 const currentDate = new Date();
 const dateString = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
 const cacheKey = `${CONFIG.CACHE_KEY_PREFIX}_${dateString}`;
 
-// 应用状态
+// Application state
 let currentIndex = 0;
 let isTransitioning = false;
 let insights = [];
 
-// DOM元素引用
+// DOM element references
 const contentContainer = document.getElementById('C');
 const iconContainer = document.getElementById('T');
 const textDisplay = document.getElementById('X');
@@ -118,10 +114,10 @@ const statusText = document.getElementById('ST');
 const dateTitle = document.getElementById('DT');
 const refreshButton = document.getElementById('R');
 
-// 初始化日期标题
-dateTitle.textContent = `${currentDate.getFullYear()}年${currentDate.getMonth() + 1}月${currentDate.getDate()}日 商机洞察`;
+// Initialize date title
+dateTitle.textContent = `${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`;
 
-// 为每条洞察分配视觉样式（颜色主题和图标）
+// Assign visual style for each insight
 function assignVisualStyle(text, tag) {
   const randomGenerator = mulberry32(stringToHash(dateString + text));
   const themeIndex = Math.floor(randomGenerator() * colorThemeKeys.length);
@@ -135,7 +131,7 @@ function assignVisualStyle(text, tag) {
   return [text, tag, colorThemeKeys[themeIndex], iconName];
 }
 
-// 渲染当前洞察
+// Render current insight
 function renderCurrentInsight() {
   if (insights.length === 0) return;
   
@@ -155,7 +151,7 @@ function renderCurrentInsight() {
   tagBadge.style.color = themeColors[4];
 }
 
-// 切换到上一条或下一条
+// Navigate to previous or next
 function navigate(direction) {
   if (isTransitioning || insights.length === 0) return;
   
@@ -173,7 +169,7 @@ function navigate(direction) {
   }, CONFIG.TRANSITION_DURATION);
 }
 
-// 加载洞察数据
+// Load insights data
 function loadInsights(data, keepPosition = false) {
   insights = data.map(item => assignVisualStyle(item[0], item[1]));
   
@@ -188,26 +184,26 @@ function loadInsights(data, keepPosition = false) {
   renderCurrentInsight();
 }
 
-// Fallback数据（当AI调用失败时使用）
+// Fallback data
 const fallbackInsights = [
-  ['好几个国家开始发"数字游民签证"了，远程工作者可以合法长居。想想看，拿着一线城市的工资在清迈生活，储蓄率直接翻倍。', '政策'],
-  ['电动车卖疯了，但充电桩完全跟不上。有人已经开始做移动充电车上门服务了，你在的城市有人做了吗？没有的话，机会就是你的。', '能源'],
-  ['满大街的餐饮小店老板都在发愁同一件事：不会拍短视频。帮他们拍、帮他们运营账号，这活儿不需要太多技术，但需求多到接不完。', '文娱'],
-  ['老年人智能手机普及了，但他们最大的痛点是不会用。上门教老人用手机这件事，听着不起眼，需求却大得惊人。', '养老'],
-  ['你身边养宠物的人是不是越来越多了？但宠物保险在国内几乎没人做。围绕宠物健康的服务，现在入场还算早。', '宠物'],
-  ['碳中和不只是大企业的事。很多中小企业被要求做碳核算但根本不会，帮他们算碳、出报告，门槛不高但需求在猛涨。', '环保'],
-  ['跨境电商平台对新店有流量扶持期，很多人还不知道这回事。用国内供应链做小众品类出海，窗口期可能就这一两年。', '跨境'],
-  ['心理咨询需求在爆发，但持证咨询师远远不够。不做咨询也行，做情绪管理课程、冥想内容、心理测评工具，都在起飞。', '心理'],
-  ['留意一下你所在城市有没有在试点社区食堂，政府补贴加市场化运营，选对社区的话毛利相当可观。', '餐饮'],
-  ['身边考证的人越来越多，但真正赚钱的不是考证本身，是卖备考资料、做陪伴督学——利润高，还能标准化复制。', '教育'],
-  ['年轻人越来越接受买二手奢侈品了。鉴定、养护、代卖这几个环节，个人都能做，而且利润率很不错。', '消费'],
-  ['无人机驾照现在考一个才几千块，等低空经济真正起量的时候，这东西的含金量可能完全不一样了。', '科技'],
-  ['中国独居人口已经过亿了。一人食、一人居、一人游，围绕"一个人"的消费场景正在批量爆发。', '消费'],
-  ['知识付费已经过了卖焦虑的阶段了。现在真正好卖的是极度垂直的实操课，比如教人做Excel自动化、剪视频、运营小红书。', '教育'],
-  ['线上问诊的政策口子越开越大，处方也开始外流了。药店以后拼的不是位置好不好，而是线上服务跟不跟得上。', '医疗']
+  ['Several countries are issuing "digital nomad visas" - remote workers can legally reside long-term. Imagine earning a big city salary while living in Chiang Mai - your savings rate doubles instantly.', 'Policy'],
+  ['EV sales are booming, but charging infrastructure can\'t keep up. Some are already offering mobile charging services that come to you. Does anyone do this in your city? If not, the opportunity is yours.', 'Energy'],
+  ['Small restaurant owners everywhere share the same problem: they can\'t create short videos. Help them film and manage their accounts - it doesn\'t require much skill, but the demand is endless.', 'Media'],
+  ['Seniors now have smartphones, but most don\'t know how to use them. Teaching elderly people to use phones sounds trivial, but the demand is huge.', 'Care'],
+  ['More people around you are getting pets, but pet insurance is barely available locally. Services around pet health - now is still early to enter.', 'Pet'],
+  ['Carbon neutrality isn\'t just for big corporations. Many SMEs are required to do carbon accounting but have no clue how. Helping them calculate and report - low barrier, soaring demand.', 'Eco'],
+  ['Cross-border e-commerce platforms offer traffic boosts for new stores. Few people know about this. Use domestic supply chains for niche products overseas - the window might only be a year or two.', 'E-commerce'],
+  ['Mental health counseling demand is exploding, but certified therapists are in short supply. You don\'t need to be a therapist - sell emotional management courses, meditation content, or assessment tools.', 'Mental'],
+  ['Check if your city is piloting community dining halls. Government subsidies plus market operation can yield decent margins if you pick the right neighborhood.', 'Dining'],
+  ['More people are getting certifications, but the real money isn\'t in taking exams - it\'s selling study materials and providing accountability coaching. High margins, easily scalable.', 'Education'],
+  ['Young people are increasingly accepting of pre-owned luxury goods. Authentication, care, and consignment - individuals can do all of this with great profit margins.', 'Retail'],
+  ['Drone licenses cost just a few thousand now. When low-altitude economy takes off, this qualification could be worth much more.', 'Tech'],
+  ['China has over 100 million single-person households. Single-person meals, living, and travel - consumer scenarios centered around "one person" are exploding.', 'Retail'],
+  ['Knowledge payment has moved past anxiety-selling. What really sells now are hyper-niche practical courses - teaching Excel automation, video editing, or Xiaohongshu operation.', 'Education'],
+  ['Online medical consultation policies are expanding, and prescriptions are flowing outside hospitals. Pharmacies will compete on online services, not just location.', 'Health']
 ];
 
-// 尝试从本地缓存加载数据
+// Cache functions
 function tryLoadFromCache() {
   try {
     const cachedData = localStorage.getItem(cacheKey);
@@ -215,7 +211,7 @@ function tryLoadFromCache() {
       const parsedData = JSON.parse(cachedData);
       if (parsedData && parsedData.length > 0) {
         loadInsights(parsedData);
-        statusText.textContent = '今日洞察 (已缓存)';
+        statusText.textContent = 'Today\'s Insights (Cached)';
         return true;
       }
     }
@@ -225,29 +221,25 @@ function tryLoadFromCache() {
   return false;
 }
 
-// 保存数据到本地缓存
 function saveToCache(data) {
   try {
-    // 清理旧的缓存数据
     const oldCacheKeys = Object.keys(localStorage)
       .filter(key => key.startsWith(CONFIG.CACHE_KEY_PREFIX) && key !== cacheKey);
     
     oldCacheKeys.forEach(key => localStorage.removeItem(key));
-    
-    // 保存新数据
     localStorage.setItem(cacheKey, JSON.stringify(data));
   } catch (error) {
     console.warn('Failed to save to cache:', error);
   }
 }
 
-// AI提示词
-const aiPrompt = `今天是${dateString}。请基于你所知道的最新信息，生成15条个人商机洞察。每条严格控制在100个字符以内。示范（注意每条的句式、语气、切入角度都不一样）："老年人智能手机普及了，但他们最大的痛点是不会用。上门教老人用手机这件事，听着不起眼，需求却大得惊人。" "身边考证的人越来越多，但真正赚钱的不是考证本身，是卖备考资料、做陪伴督学——利润高，还能标准化复制。" "无人机驾照现在考一个才几千块，等低空经济真正起量的时候，这东西的含金量可能完全不一样了。"——关键要求：像朋友聊天一样自然地说，不要用"随着...的发展"、"值得关注的是"这类书面套话。每条的句式必须不同，有的可以用反问，有的可以讲一个现象，有的可以直接说一个行动，有的可以先抛一个问题再给方向。基于真实可查证的信息，不要编造；商机面向个人可行动；领域多样化，不要集中在AI。严格按JSON数组输出：[{"text":"内容","tag":"领域(2字)"}]，不要输出其他内容。`;
+// AI prompt
+const aiPrompt = `Today is ${dateString}. Based on the latest information you know, generate 15 personal business opportunity insights. Each must be strictly within 100 characters. Examples: "Seniors now have smartphones, but most don't know how to use them. Teaching elderly people to use phones sounds trivial, but the demand is huge." "More people are getting certifications, but the real money isn't in taking exams - it's selling study materials and accountability coaching." Key requirements: Speak naturally like chatting with a friend. Avoid formal phrases. Each sentence must have a different structure. Based on verifiable facts only. Opportunities should be actionable by individuals. Diversify across different fields. Output strictly as JSON array: [{"text":"content","tag":"category"}]. No other content allowed.`;
 
-// 验证AI返回的数据格式
+// Validate AI response
 function validateResponse(data) {
   if (!Array.isArray(data) || data.length < CONFIG.MIN_ITEMS_REQUIRED) {
-    throw new Error(`数据数量不足，期望至少${CONFIG.MIN_ITEMS_REQUIRED}条，实际${data.length}条`);
+    throw new Error(`Insufficient data items. Expected at least ${CONFIG.MIN_ITEMS_REQUIRED}, got ${data.length}`);
   }
   
   const validItems = [];
@@ -255,31 +247,27 @@ function validateResponse(data) {
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
     
-    // 验证数据格式
     if (!item || typeof item.text !== 'string' || typeof item.tag !== 'string') {
-      console.warn(`第${i}条数据格式无效，已跳过`);
+      console.warn(`Item ${i} has invalid format, skipped`);
       continue;
     }
     
     const text = item.text.trim();
     const tag = item.tag.trim();
     
-    // 验证文本长度
     if (text.length < CONFIG.TEXT_LENGTH.min || text.length > CONFIG.TEXT_LENGTH.max) {
-      console.warn(`第${i}条文本长度不符合要求（${text.length}字符），已跳过`);
+      console.warn(`Item ${i} text length invalid (${text.length} chars), skipped`);
       continue;
     }
     
-    // 验证标签长度
-    if (tag.length < 1 || tag.length > 4) {
-      console.warn(`第${i}条标签长度不符合要求（${tag.length}字符），已跳过`);
+    if (tag.length < 1 || tag.length > 15) {
+      console.warn(`Item ${i} tag length invalid (${tag.length} chars), skipped`);
       continue;
     }
     
-    // 检查重复
     const isDuplicate = validItems.some(existing => existing[0] === text);
     if (isDuplicate) {
-      console.warn(`第${i}条数据重复，已跳过`);
+      console.warn(`Item ${i} is duplicate, skipped`);
       continue;
     }
     
@@ -287,193 +275,165 @@ function validateResponse(data) {
   }
   
   if (validItems.length < CONFIG.MIN_ITEMS_REQUIRED) {
-    throw new Error(`有效数据不足，期望至少${CONFIG.MIN_ITEMS_REQUIRED}条，实际${validItems.length}条`);
+    throw new Error(`Insufficient valid items. Expected at least ${CONFIG.MIN_ITEMS_REQUIRED}, got ${validItems.length}`);
   }
   
   return validItems;
 }
 
-// 调用Gemini API（支持多代理自动重试）
-async function callGeminiApi(prompt, proxyIndex = 0) {
-  const proxyUrls = [
-    'https://corsproxy.io/?',
-    'https://api.allorigins.win/raw?url=',
-    'https://cors-anywhere.herokuapp.com/'
-  ];
+// Call Doubao API
+async function callDoubaoApi(prompt, attempt = 1) {
+  const apiKey = import.meta.env.VITE_DOUBAO_API_KEY;
+  const model = import.meta.env.VITE_DOUBAO_MODEL;
   
-  console.log('🔄 开始调用Gemini API... (代理索引:', proxyIndex, ')');
+  if (!apiKey || apiKey === 'your_doubao_api_key_here') {
+    throw new Error('Doubao API key not configured. Please set VITE_DOUBAO_API_KEY in .env file.');
+  }
   
-  const requestBody = { 
-    contents: [{ parts: [{ text: prompt }] }], 
-    generationConfig: { 
-      temperature: 0.7,
-      maxOutputTokens: 4096,
-      topK: 40,
-      topP: 0.95
-    }
+  console.log(`Calling Doubao API... (Attempt ${attempt})`);
+  
+  const requestBody = {
+    model: model,
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a business insights generator. Generate concise, actionable business opportunities in JSON format.'
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ],
+    temperature: 0.7,
+    max_tokens: 4096
   };
   
-  console.log('📤 请求体:', JSON.stringify(requestBody, null, 2));
+  console.log('📤 Request body:', JSON.stringify(requestBody, null, 2));
   
-  // 构建带当前代理的URL
-  const proxyUrl = proxyUrls[proxyIndex % proxyUrls.length];
-  const targetUrl = `${API_CONFIG.API_URL}?key=${API_CONFIG.API_KEY}`;
-  const fullUrl = proxyUrl.includes('allorigins') 
-    ? `${proxyUrl}${encodeURIComponent(targetUrl)}`
-    : `${proxyUrl}${targetUrl}`;
-  
-  console.log('🌐 请求URL:', fullUrl);
-  
-  // 创建超时控制器（30秒超时）
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
   
   try {
-    const response = await fetch(fullUrl, {
+    const response = await fetch(CONFIG.API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
       body: JSON.stringify(requestBody),
       signal: controller.signal
     });
     
     clearTimeout(timeoutId);
-    console.log('📥 响应状态:', response.status, response.statusText);
+    console.log('📥 Response status:', response.status, response.statusText);
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ API请求失败:', errorText);
+      console.error('❌ API request failed:', errorText);
       
-      // 如果当前代理失败，尝试下一个代理
-      if (proxyIndex < proxyUrls.length - 1) {
-        console.log('🔄 尝试下一个代理...');
-        return callGeminiApi(prompt, proxyIndex + 1);
+      if (attempt < CONFIG.MAX_API_ATTEMPTS) {
+        console.log(`🔄 Retrying (Attempt ${attempt + 1})...`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        return callDoubaoApi(prompt, attempt + 1);
       }
       
-      throw new Error(`API请求失败，HTTP状态码: ${response.status}, 错误信息: ${errorText}`);
+      throw new Error(`API request failed. HTTP status: ${response.status}, Error: ${errorText}`);
     }
     
     const data = await response.json();
-    console.log('📊 API响应:', JSON.stringify(data, null, 2));
+    console.log('📊 API response:', JSON.stringify(data, null, 2));
     
     let rawText = '';
     try {
-      rawText = data.candidates[0].content.parts[0].text;
+      if (data.choices && data.choices.length > 0) {
+        rawText = data.choices[0].message.content;
+      } else {
+        throw new Error('Unexpected response format');
+      }
     } catch (error) {
-      console.error('❌ 响应格式解析失败:', error);
-      throw new Error('API响应格式错误');
+      console.error('❌ Response format parsing failed:', error);
+      console.error('❌ Raw response:', JSON.stringify(data));
+      throw new Error('API response format error');
     }
     
-    // 清理可能的代码块标记
+    if (!rawText) {
+      throw new Error('Empty response from API');
+    }
+    
     const cleanedText = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-    console.log('✨ 清理后的响应:', cleanedText);
+    console.log('✨ Cleaned response:', cleanedText);
     
     return cleanedText;
   } catch (error) {
     clearTimeout(timeoutId);
     
     if (error.name === 'AbortError') {
-      console.error('⏱️ 请求超时！');
+      console.error('⏱️ Request timeout!');
+    } else if (error.name === 'TypeError') {
+      console.error('🔌 Network error:', error.message);
     } else {
-      console.error('❌ 请求失败:', error.message);
+      console.error('❌ Request failed:', error.message);
     }
     
-    // 如果当前代理失败，尝试下一个代理
-    if (proxyIndex < proxyUrls.length - 1) {
-      console.log('🔄 尝试下一个代理...');
-      return callGeminiApi(prompt, proxyIndex + 1);
+    if (attempt < CONFIG.MAX_API_ATTEMPTS) {
+      console.log(`🔄 Retrying (Attempt ${attempt + 1})...`);
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      return callDoubaoApi(prompt, attempt + 1);
     }
     
     throw error;
   }
 }
 
-// 验证事实准确性
-async function verifyFacts(items) {
-  const texts = items.map(item => item[0]);
-  const verificationPrompt = `以下是一组基于近期新闻的商机洞察，请逐条判断：1)提到的事件/趋势是否真实发生过；2)推导出的商机是否基本合理。两者都满足回答true，否则false。严格按JSON数组输出布尔值，不要输出其他内容。\n${JSON.stringify(texts)}`;
-  
-  try {
-    const rawResponse = await callGeminiApi(verificationPrompt);
-    const verdicts = JSON.parse(rawResponse);
-    
-    if (!Array.isArray(verdicts)) {
-      throw new Error('验证响应格式错误');
-    }
-    
-    const verifiedItems = [];
-    for (let i = 0; i < items.length; i++) {
-      if (i < verdicts.length && verdicts[i] === false) {
-        console.warn(`第${i}条洞察未通过事实验证，已跳过`);
-        continue;
-      }
-      verifiedItems.push(items[i]);
-    }
-    
-    if (verifiedItems.length < CONFIG.MIN_ITEMS_REQUIRED) {
-      throw new Error(`验证通过的数据不足，期望至少${CONFIG.MIN_ITEMS_REQUIRED}条，实际${verifiedItems.length}条`);
-    }
-    
-    return verifiedItems;
-  } catch (error) {
-    console.warn('事实验证失败，跳过验证步骤:', error);
-    return items;
-  }
-}
-
-// 从AI获取洞察数据
+// Fetch insights from AI
 async function fetchFromAI(attempt = 1) {
-  statusText.textContent = `加载中${attempt > 1 ? ` (第${attempt}次尝试)` : ''}...`;
+  statusText.textContent = `Loading${attempt > 1 ? ` (Attempt ${attempt})` : ''}...`;
   
   try {
-    const rawResponse = await callGeminiApi(aiPrompt);
+    const rawResponse = await callDoubaoApi(aiPrompt);
     const parsedData = JSON.parse(rawResponse);
     const validatedData = validateResponse(parsedData);
-    const verifiedData = await verifyFacts(validatedData);
     
-    if (verifiedData.length < CONFIG.MIN_ITEMS_REQUIRED) {
-      throw new Error(`验证后数据不足，仅${verifiedData.length}条`);
-    }
-    
-    saveToCache(verifiedData);
-    loadInsights(verifiedData, true);
-    statusText.textContent = `今日洞察 (AI 生成 · 已验证 · ${verifiedData.length}条)`;
+    saveToCache(validatedData);
+    loadInsights(validatedData, true);
+    statusText.textContent = `Today's Insights (AI Generated · ${validatedData.length} items)`;
     
     if (refreshButton) {
       refreshButton.disabled = false;
-      refreshButton.textContent = '🔄 刷新AI洞察';
+      refreshButton.textContent = 'Refresh AI Insights';
     }
   } catch (error) {
-    console.warn(`第${attempt}次获取AI数据失败:`, error);
+    console.warn(`Failed to fetch AI data on attempt ${attempt}:`, error);
     
     if (attempt < CONFIG.MAX_API_ATTEMPTS) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       fetchFromAI(attempt + 1);
     } else {
-      console.warn('所有尝试均失败，使用fallback数据');
-      statusText.textContent = '显示经典洞察库';
+      console.warn('All attempts failed, using fallback data');
+      statusText.textContent = 'Showing Classic Insights';
       loadInsights(fallbackInsights);
       
       if (refreshButton) {
         refreshButton.disabled = false;
-        refreshButton.textContent = '🔄 刷新AI洞察';
+        refreshButton.textContent = 'Refresh AI Insights';
       }
     }
   }
 }
 
-// 刷新AI内容
+// Refresh AI content
 function refreshAI() {
   if (isTransitioning) return;
   
   localStorage.removeItem(cacheKey);
   refreshButton.disabled = true;
-  refreshButton.textContent = '🔄 刷新中...';
-  statusText.textContent = '加载中...';
+  refreshButton.textContent = 'Refreshing...';
+  statusText.textContent = 'Loading...';
   
   fetchFromAI();
 }
 
-// 监听事件
+// Event listeners
 document.getElementById('P').addEventListener('click', () => navigate(-1));
 document.getElementById('N').addEventListener('click', () => navigate(1));
 
@@ -482,7 +442,7 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowLeft') navigate(-1);
 });
 
-// 触摸滑动支持
+// Touch swipe support
 let touchStartX = 0;
 let touchStartY = 0;
 
@@ -502,9 +462,9 @@ contentContainer.addEventListener('touchend', (event) => {
 
 refreshButton.addEventListener('click', refreshAI);
 
-// 初始化
+// Initialization
 if (!tryLoadFromCache()) {
   loadInsights(fallbackInsights);
-  statusText.textContent = '加载中...';
+  statusText.textContent = 'Loading...';
   fetchFromAI();
 }
