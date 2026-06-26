@@ -4,7 +4,7 @@ inject();
 
 // Configuration
 const CONFIG = {
-  API_URL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
+  API_URL: 'https://api.openai.com/v1/chat/completions',
   TRANSITION_DURATION: 300,
   SWIPE_THRESHOLD: 40,
   MAX_API_ATTEMPTS: 3,
@@ -285,16 +285,16 @@ function validateResponse(data) {
   return validItems;
 }
 
-// Call Doubao API
-async function callDoubaoApi(prompt, attempt = 1) {
-  const apiKey = import.meta.env.VITE_DOUBAO_API_KEY;
-  const model = import.meta.env.VITE_DOUBAO_MODEL;
+// Call OpenAI API
+async function callOpenAIApi(prompt, attempt = 1) {
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  const model = import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini';
   
-  if (!apiKey || apiKey === 'your_doubao_api_key_here') {
-    throw new Error('Doubao API key not configured. Please set VITE_DOUBAO_API_KEY in .env file.');
+  if (!apiKey || apiKey === 'your_openai_api_key_here') {
+    throw new Error('OpenAI API key not configured. Please set VITE_OPENAI_API_KEY in .env file.');
   }
   
-  console.log(`Calling Doubao API... (Attempt ${attempt})`);
+  console.log(`Calling OpenAI API... (Attempt ${attempt})`);
   
   const requestBody = {
     model: model,
@@ -338,7 +338,7 @@ async function callDoubaoApi(prompt, attempt = 1) {
       if (attempt < CONFIG.MAX_API_ATTEMPTS) {
         console.log(`🔄 Retrying (Attempt ${attempt + 1})...`);
         await new Promise(resolve => setTimeout(resolve, 3000));
-        return callDoubaoApi(prompt, attempt + 1);
+        return callOpenAIApi(prompt, attempt + 1);
       }
       
       throw new Error(`API request failed. HTTP status: ${response.status}, Error: ${errorText}`);
@@ -382,7 +382,7 @@ async function callDoubaoApi(prompt, attempt = 1) {
     if (attempt < CONFIG.MAX_API_ATTEMPTS) {
       console.log(`🔄 Retrying (Attempt ${attempt + 1})...`);
       await new Promise(resolve => setTimeout(resolve, 3000));
-      return callDoubaoApi(prompt, attempt + 1);
+      return callOpenAIApi(prompt, attempt + 1);
     }
     
     throw error;
@@ -394,7 +394,7 @@ async function fetchFromAI(attempt = 1) {
   statusText.textContent = `Loading${attempt > 1 ? ` (Attempt ${attempt})` : ''}...`;
   
   try {
-    const rawResponse = await callDoubaoApi(aiPrompt);
+    const rawResponse = await callOpenAIApi(aiPrompt);
     const parsedData = JSON.parse(rawResponse);
     const validatedData = validateResponse(parsedData);
     

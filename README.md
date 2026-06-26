@@ -6,7 +6,7 @@ Break through mental blocks and spark unlimited creativity with daily business i
 
 - **Frontend Framework**: Vanilla JavaScript (ES6+)
 - **Build Tool**: Vite 5.x
-- **AI Provider**: Doubao API (ByteDance)
+- **AI Provider**: OpenAI API (gpt-4o-mini default)
 - **Fonts**: Plus Jakarta Sans (Google Fonts)
 - **Icons**: Custom SVG icons
 - **Analytics**: Vercel Analytics (page views, web vitals)
@@ -32,10 +32,10 @@ npm run preview
 Create a `.env` file in the project root:
 
 ```env
-# Doubao API Configuration
-# Get your API key from: https://console.volcengine.com/ark
-VITE_DOUBAO_API_KEY=your_doubao_api_key_here
-VITE_DOUBAO_MODEL=ep-202410xxxxx-xxxxx
+# OpenAI API Configuration
+# Get your API key from: https://platform.openai.com/api-keys
+VITE_OPENAI_API_KEY=your_openai_api_key_here
+VITE_OPENAI_MODEL=gpt-4o-mini
 ```
 
 ## Deployment
@@ -50,8 +50,6 @@ npm install -g vercel
 vercel --prod
 ```
 
-After deployment, view analytics in your Vercel dashboard under the "Analytics" tab.
-
 ## Project Structure
 
 ```
@@ -63,7 +61,6 @@ idea-breaker/
 │   └── styles/
 │       └── main.css    # Styles
 ├── .env                # Environment variables (not in git)
-├── .env.example        # Environment variables template
 ├── .gitignore
 ├── package.json
 └── README.md
