@@ -9,7 +9,7 @@ Break through mental blocks and spark unlimited creativity with daily business i
 - **AI Provider**: OpenAI API (gpt-4o-mini default)
 - **Fonts**: Plus Jakarta Sans (Google Fonts)
 - **Icons**: Custom SVG icons
-- **Analytics**: Vercel Analytics (page views, web vitals)
+- **Deployment**: GitHub Pages
 
 ## Quick Start
 
@@ -27,41 +27,21 @@ npm run build
 npm run preview
 ```
 
-## Configuration
-
-Create a `.env` file in the project root:
-
-```env
-# OpenAI API Configuration
-# Get your API key from: https://platform.openai.com/api-keys
-VITE_OPENAI_API_KEY=your_openai_api_key_here
-VITE_OPENAI_MODEL=gpt-4o-mini
-```
-
-## Deployment
-
-Deploy to Vercel to enable analytics and speed insights:
-
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy
-vercel --prod
-```
-
 ## Project Structure
 
 ```
 idea-breaker/
-├── index.html          # Main entry point
+├── .github/
+│   └── workflows/
+│       └── deploy.yml  # GitHub Actions deployment workflow
 ├── src/
 │   ├── scripts/
 │   │   └── app.js      # Application logic
 │   └── styles/
 │       └── main.css    # Styles
-├── .env                # Environment variables (not in git)
 ├── .gitignore
+├── index.html          # Main entry point
 ├── package.json
+├── vite.config.js      # Vite configuration
 └── README.md
 ```

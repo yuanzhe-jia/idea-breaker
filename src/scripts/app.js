@@ -1,7 +1,3 @@
-// Vercel Analytics
-import { inject } from '@vercel/analytics';
-inject();
-
 // Configuration
 const CONFIG = {
   API_URL: 'https://api.openai.com/v1/chat/completions',
